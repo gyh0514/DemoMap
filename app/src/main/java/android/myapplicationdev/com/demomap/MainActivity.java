@@ -51,14 +51,16 @@ public class MainActivity extends AppCompatActivity {
                 //The permission check is especially important for API 23 (Marshmallow) onwards.
                 // This is because a user can choose to revoke a permission after the installation of the app.
                 // As such, an in-code permission check is necessary to prevent run time exception.
+
                 int permissionCheck = ContextCompat.checkSelfPermission(MainActivity.this,
                         android.Manifest.permission.ACCESS_FINE_LOCATION);
 
-                if (permissionCheck == PermissionChecker.PERMISSION_GRANTED){
+                if (permissionCheck == PermissionChecker.PERMISSION_GRANTED) {
                     map.setMyLocationEnabled(true);
                 } else {
                     Log.e("GMap - Permission", "GPS access has not been granted");
                 }
+
 
                 //Place some markers
                 Marker cp = map.addMarker(new MarkerOptions()
