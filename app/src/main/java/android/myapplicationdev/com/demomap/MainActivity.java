@@ -1,14 +1,25 @@
 package android.myapplicationdev.com.demomap;
 
+import android.Manifest;
+import android.graphics.Bitmap;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.PermissionChecker;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.UiSettings;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -27,6 +38,40 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onMapReady(GoogleMap googleMap) {
                 map = googleMap;
+
+                LatLng poi_CausewayPoint = new LatLng(1.436065, 103.786263);
+                LatLng poi_RP = new LatLng(1.44224, 103.785733);
+
+                map.moveCamera(CameraUpdateFactory.newLatLngZoom(poi_CausewayPoint, 15));
+
+                UiSettings ui = map.getUiSettings();
+                ui.setCompassEnabled(true); // this compass thing is not working for my emulator
+                ui.setZoomControlsEnabled(true);
+
+                //The permission check is especially important for API 23 (Marshmallow) onwards.
+                // This is because a user can choose to revoke a permission after the installation of the app.
+                // As such, an in-code permission check is necessary to prevent run time exception.
+                int permissionCheck = ContextCompat.checkSelfPermission(MainActivity.this,
+                        android.Manifest.permission.ACCESS_FINE_LOCATION);
+
+                if (permissionCheck == PermissionChecker.PERMISSION_GRANTED){
+                    map.setMyLocationEnabled(true);
+                } else {
+                    Log.e("GMap - Permission", "GPS access has not been granted");
+                }
+
+                //Place some markers
+                Marker cp = map.addMarker(new MarkerOptions()
+                        .position(poi_CausewayPoint)
+                        .title("Causeway Point")
+                        .snippet("Shopping after class")
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+
+                Marker rp = map.addMarker(new MarkerOptions()
+                        .position(poi_RP)
+                        .title("Republic Polytechnic")
+                        .snippet("C347 Android Programming II")
+                        .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher)));
             }
         });
 
